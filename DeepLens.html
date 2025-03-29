@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Image Converter Pro</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6e8efb, #a777e3);
+            --secondary-gradient: linear-gradient(135deg, #f093fb, #f5576c);
+            --dark-gradient: linear-gradient(135deg, #2c3e50, #4ca1af);
+            --success-gradient: linear-gradient(135deg, #11998e, #38ef7d);
+            --warning-gradient: linear-gradient(135deg, #f46b45, #eea849);
+            --premium-gradient: linear-gradient(135deg, #ff8a00, #e52e71);
+            --glow-blue: 0 0 15px rgba(110, 142, 251, 0.7);
+            --glow-purple: 0 0 15px rgba(167, 119, 227, 0.7);
+            --glow-pink: 0 0 15px rgba(245, 87, 108, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            color: white;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(110,142,251,0.1) 0%, rgba(167,119,227,0) 70%);
+            animation: float 15s infinite linear;
+            z-index: -1;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(245,87,108,0.1) 0%, rgba(245,87,108,0) 70%);
+            animation: float 18s infinite linear reverse;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(50px, 50px) rotate(360deg);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #ff8a00, #e52e71, #6a11cb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(255, 138, 0, 0.4);
+            animation: glow 2.5s ease-in-out infinite alternate;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #6e8efb, #a777e3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 600;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 138, 0, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(230, 46, 113, 0.6), 0 0 30px rgba(106, 17, 203, 0.4);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(255, 138, 0, 0.5), 0 0 25px rgba(230, 46, 113, 0.5);
+            }
+        }
+
+        .converter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .file-input-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem 2rem;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .file-input-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(110, 142, 251, 0.1), rgba(167, 119, 227, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-input-area:hover::before {
+            opacity: 1;
+        }
+
+        .file-input-area.active {
+            border-color: #a777e3;
+            box-shadow: 0 0 20px rgba(167, 119, 227, 0.3);
+        }
+
+        .file-input-area i {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(var(--glow-blue));
+        }
+
+        .file-input-area p {
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #6e8efb;
+            margin-top: 0.5rem;
+            text-shadow: 0 0 5px rgba(110, 142, 251, 0.3);
+        }
+
+        .format-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .format-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .format-title i {
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .format-btn {
+            padding: 0.9rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            background: var(--dark-gradient);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            font-size: 1rem;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .format-btn.premium::after {
+            content: 'PRO';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--premium-gradient);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .format-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.3s ease;
+            border-radius: 50px;
+            filter: blur(3px);
+        }
+
+        .format-btn:hover::before {
+            opacity: 1;
+        }
+
+        .format-btn.active {
+            background: var(--primary-gradient);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(var(--glow-blue));
+        }
+
+        .format-btn.active.premium {
+            background: var(--premium-gradient);
+            filter: drop-shadow(var(--glow-pink));
+        }
+
+        .settings-section {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: space-between;
+        }
+
+        .setting-group {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .setting-group:hover {
+            transform: translateY(-5px);
+        }
+
+        .setting-group h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .setting-group h3 i {
+            font-size: 1.2rem;
+        }
+
+        .slider-container {
+            width: 100%;
+            margin-top: 1.2rem;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .slider-container input[type="range"]:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(110, 142, 251, 0.5);
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-group:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            accent-color: #6e8efb;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            flex: 1;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            min-width: 200px;
+            text-align: center;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            z-index: -1;
+            filter: blur(5px);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-convert {
+            background: var(--success-gradient);
+            filter: drop-shadow(0 0 10px rgba(17, 153, 142, 0.3));
+        }
+
+        .btn-convert:hover {
+            filter: drop-shadow(0 0 15px rgba(17, 153, 142, 0.5));
+        }
+
+        .btn-download {
+            background: var(--secondary-gradient);
+            filter: drop-shadow(0 0 10px rgba(245, 87, 108, 0.3));
+            display: none;
+        }
+
+        .btn-download:hover {
+            filter: drop-shadow(0 0 15px rgba(245, 87, 108, 0.5));
+        }
+
+        .btn-reset {
+            background: var(--warning-gradient);
+            filter: drop-shadow(0 0 10px rgba(244, 107, 69, 0.3));
+        }
+
+        .btn-reset:hover {
+            filter: drop-shadow(0 0 15px rgba(244, 107, 69, 0.5));
+        }
+
+        .preview-section {
+            margin-top: 3rem;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            justify-content: center;
+        }
+
+        .preview-box {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .preview-box h3 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-info {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .file-info p {
+            margin-bottom: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .file-info span:first-child {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 20px 50px rgba(110, 142, 251, 0.3);
+            }
+        }
+
+        .loading-spinner {
+            width: 100px;
+            height: 100px;
+            border: 10px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #6e8efb;
+            border-bottom-color: #a777e3;
+            animation: spin 1.5s linear infinite;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .loading-spinner::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 10px solid transparent;
+            border-radius: 50%;
+            border-top-color: #f5576c;
+            border-bottom-color: #f093fb;
+            animation: spin 2s linear infinite reverse;
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            background: linear-gradient(to right, #6e8efb, #a777e3, #f5576c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(110, 142, 251, 0.3);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(167, 119, 227, 0.5);
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.3) 50%, 
+                rgba(255, 255, 255, 0) 100%);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .status-message {
+            margin-top: 2rem;
+            padding: 1.2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            display: none;
+            text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-success {
+            background: rgba(17, 153, 142, 0.15);
+            color: #38ef7d;
+            border: 1px solid rgba(56, 239, 125, 0.3);
+        }
+
+        .status-error {
+            background: rgba(245, 107, 69, 0.15);
+            color: #f46b45;
+            border: 1px solid rgba(244, 107, 69, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(238, 168, 73, 0.15);
+            color: #eea849;
+            border: 1px solid rgba(238, 168, 73, 0.3);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+            pointer-events: none;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .format-buttons {
+                gap: 0.8rem;
+            }
+            
+            .format-btn {
+                padding: 0.7rem 1rem;
+                min-width: auto;
+                font-size: 0.9rem;
+            }
+            
+            .preview-box {
+                min-width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>DeepLens iC</h1>
+        <h2>Convert Your Way with  15+ image formats with professional quality</h2>
+        
+        <div class="converter-section">
+            <div class="file-input-area" id="dropArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & Drop your image here or click to browse</p>
+                <p class="file-name" id="fileName">No file selected</p>
+                <input type="file" id="fileInput" class="file-input" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.tiff,.svg,.raw,.psd,.ai,.eps,.indd,.pdf,.ico,.heic,.avif">
+            </div>
+            
+            <div class="format-selection">
+                <div class="format-title">
+                    <i class="fas fa-file-export"></i>
+                    <h3>Convert to:</h3>
+                </div>
+                <div class="format-buttons">
+                    <button class="format-btn" data-format="jpg">JPG</button>
+                    <button class="format-btn" data-format="png">PNG</button>
+                    <button class="format-btn" data-format="webp">WEBP</button>
+                    <button class="format-btn" data-format="gif">GIF</button>
+                    <button class="format-btn" data-format="bmp">BMP</button>
+                    <button class="format-btn active" data-format="tiff">TIFF</button>
+                    <button class="format-btn" data-format="svg">SVG</button>
+                    <button class="format-btn" data-format="pdf">PDF</button>
+                    <button class="format-btn premium" data-format="eps">EPS</button>
+                    <button class="format-btn premium" data-format="indd">INDD</button>
+                    <button class="format-btn premium" data-format="ai">AI</button>
+                    <button class="format-btn premium" data-format="psd">PSD</button>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="setting-group">
+                    <h3><i class="fas fa-sliders-h"></i> Quality Settings</h3>
+                    <div class="slider-container">
+                        <input type="range" id="qualitySlider" min="1" max="100" value="90">
+                        <div class="slider-value">
+                            <span>Quality:</span>
+                            <span id="qualityValue">90%</span>
+                        </div>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="compressionSlider" min="0" max="9" value="4">
+                        <div class="slider-value">
+                            <span>Compression:</span>
+                            <span id="compressionValue">Balanced</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="preserveExif" checked>
+                        <label for="preserveExif">Preserve EXIF Data</label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3><i class="fas fa-expand"></i> Resize Options</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="resizeToggle">
+                        <label for="resizeToggle">Enable Resizing</label>
+                    </div>
+                    <div class="slider-container" id="widthContainer" style="display: none;">
+                        <input type="range" id="widthSlider" min="100" max="5000" value="1920" step="10">
+                        <div class="slider-value">
+                            <span>Width:</span>
+                            <span id="widthValue">1920px</span>
+                        </div>
+                    </div>
+                    <div class="slider-container" id="heightContainer" style="display: none;">
+                        <input type="range" id="heightSlider" min="100" max="5000" value="1080" step="10">
+                        <div class="slider-value">
+                            <span>Height:</span>
+                            <span id="heightValue">1080px</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="maintainAspect" checked>
+                        <label for="maintainAspect">Maintain Aspect Ratio</label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3><i class="fas fa-cog"></i> Advanced Options</h3>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="optimizeSize">
+                        <label for="optimizeSize">Optimize for Size</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="removeBackground">
+                        <label for="removeBackground">Remove Background <span class="tooltip">?<span class="tooltiptext">Available for PNG and WEBP formats only</span></span></label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="addWatermark">
+                        <label for="addWatermark">Add Watermark</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enhanceQuality">
+                        <label for="enhanceQuality">Enhance Image Quality</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-convert" id="convertBtn">
+                    <i class="fas fa-magic"></i> Convert Image
+                </button>
+                <button class="btn btn-download" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <button class="btn btn-reset" id="resetBtn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+            
+            <div class="status-message" id="statusMessage"></div>
+            
+            <div class="preview-section" id="previewSection">
+                <div class="preview-container">
+                    <div class="preview-box">
+                        <h3><i class="fas fa-file-image"></i> Original Image</h3>
+                        <img id="originalPreview" class="image-preview" src="" alt="Original Preview">
+                        <div class="file-info" id="originalInfo"></div>
+                    </div>
+                    <div class="preview-box">
+                        <h3><i class="fas fa-file-export"></i> Converted Image</h3>
+                        <img id="convertedPreview" class="image-preview" src="" alt="Converted Preview">
+                        <div class="file-info" id="convertedInfo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text" id="loadingText">Initializing Image Processor...</div>
+            <div class="progress-container">
+                <div class="progress-text">
+                    <span id="progressStatus">Starting conversion...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const fileInput = document.getElementById('fileInput');
+            const dropArea = document.getElementById('dropArea');
+            const fileName = document.getElementById('fileName');
+            const formatBtns = document.querySelectorAll('.format-btn');
+            const convertBtn = document.getElementById('convertBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const previewSection = document.getElementById('previewSection');
+            const originalPreview = document.getElementById('originalPreview');
+            const convertedPreview = document.getElementById('convertedPreview');
+            const originalInfo = document.getElementById('originalInfo');
+            const convertedInfo = document.getElementById('convertedInfo');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            const progressBar = document.getElementById('progressBar');
+            const progressStatus = document.getElementById('progressStatus');
+            const progressPercent = document.getElementById('progressPercent');
+            const statusMessage = document.getElementById('statusMessage');
+            const qualitySlider = document.getElementById('qualitySlider');
+            const qualityValue = document.getElementById('qualityValue');
+            const compressionSlider = document.getElementById('compressionSlider');
+            const compressionValue = document.getElementById('compressionValue');
+            const preserveExif = document.getElementById('preserveExif');
+            const optimizeSize = document.getElementById('optimizeSize');
+            const removeBackground = document.getElementById('removeBackground');
+            const addWatermark = document.getElementById('addWatermark');
+            const enhanceQuality = document.getElementById('enhanceQuality');
+            const resizeToggle = document.getElementById('resizeToggle');
+            const widthSlider = document.getElementById('widthSlider');
+            const widthValue = document.getElementById('widthValue');
+            const heightSlider = document.getElementById('heightSlider');
+            const heightValue = document.getElementById('heightValue');
+            const widthContainer = document.getElementById('widthContainer');
+            const heightContainer = document.getElementById('heightContainer');
+            const maintainAspect = document.getElementById('maintainAspect');
+            
+            // Variables
+            let selectedFile = null;
+            let selectedFormat = 'tiff';
+            let convertedFile = null;
+            let originalAspectRatio = 1;
+            
+            // Compression levels mapping
+            const compressionLevels = [
+                'Maximum Quality',
+                'High Quality',
+                'Quality Focused',
+                'Balanced',
+                'Size Focused',
+                'High Compression',
+                'Maximum Compression',
+                'Extreme Compression',
+                'Smallest Size',
+                'Ultra Compression'
+            ];
+            
+            // Event Listeners
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('active');
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('active');
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('active');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect({ target: fileInput });
+                }
+            });
+            
+            formatBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    formatBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedFormat = btn.dataset.format;
+                    
+                    // Disable remove background for non-transparent formats
+                    if (selectedFormat !== 'png' && selectedFormat !== 'webp' && selectedFormat !== 'svg') {
+                        removeBackground.checked = false;
+                        removeBackground.disabled = true;
+                    } else {
+                        removeBackground.disabled = false;
+                    }
+                });
+            });
+            
+            convertBtn.addEventListener('click', convertImage);
+            downloadBtn.addEventListener('click', downloadImage);
+            resetBtn.addEventListener('click', resetConverter);
+            
+            qualitySlider.addEventListener('input', () => {
+                qualityValue.textContent = `${qualitySlider.value}%`;
+            });
+            
+            compressionSlider.addEventListener('input', () => {
+                compressionValue.textContent = compressionLevels[compressionSlider.value];
+            });
+            
+            resizeToggle.addEventListener('change', () => {
+                if (resizeToggle.checked) {
+                    widthContainer.style.display = 'block';
+                    heightContainer.style.display = 'block';
+                } else {
+                    widthContainer.style.display = 'none';
+                    heightContainer.style.display = 'none';
+                }
+            });
+            
+            widthSlider.addEventListener('input', updateDimensions);
+            heightSlider.addEventListener('input', updateDimensions);
+            maintainAspect.addEventListener('change', updateDimensions);
+            
+            // Functions
+            function handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Check if file is an image
+                if (!file.type.match('image.*') && !file.name.match(/\.(jpg|jpeg|png|gif|webp|bmp|tiff|svg|raw|psd|ai|eps|indd|pdf|ico|heic|avif)$/i)) {
+                    showStatus('Please select a valid image file', 'error');
+                    return;
+                }
+                
+                // Check file size (limit to 20MB for demo)
+                if (file.size > 20 * 1024 * 1024) {
+                    showStatus('File size exceeds 20MB limit', 'error');
+                    return;
+                }
+                
+                selectedFile = file;
+                fileName.textContent = file.name;
+                
+                // Show original preview
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    originalPreview.src = e.target.result;
+                    
+                    // Get image dimensions and aspect ratio
+                    const img = new Image();
+                    img.onload = function() {
+                        originalAspectRatio = this.width / this.height;
+                        
+                        originalInfo.innerHTML = `
+                            <p><span>Type:</span> <span>${file.type || getFileType(file.name)}</span></p>
+                            <p><span>Size:</span> <span>${formatFileSize(file.size)}</span></p>
+                            <p><span>Dimensions:</span> <span>${this.width} × ${this.height} px</span></p>
+                            <p><span>Aspect Ratio:</span> <span>${originalAspectRatio.toFixed(2)}:1</span></p>
+                        `;
+                        
+                        // Set initial resize values
+                        widthSlider.value = this.width;
+                        heightSlider.value = this.height;
+                        widthValue.textContent = `${this.width}px`;
+                        heightValue.textContent = `${this.height}px`;
+                    };
+                    img.src = e.target.result;
+                    
+                    previewSection.style.display = 'block';
+                    downloadBtn.style.display = 'none';
+                    convertedPreview.src = '';
+                    convertedInfo.innerHTML = '';
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            function updateDimensions() {
+                if (maintainAspect.checked) {
+                    if (this === widthSlider) {
+                        heightSlider.value = Math.round(widthSlider.value / originalAspectRatio);
+                    } else {
+                        widthSlider.value = Math.round(heightSlider.value * originalAspectRatio);
+                    }
+                }
+                
+                widthValue.textContent = `${widthSlider.value}px`;
+                heightValue.textContent = `${heightSlider.value}px`;
+            }
+            
+            function convertImage() {
+                if (!selectedFile) {
+                    showStatus('Please select an image first', 'error');
+                    return;
+                }
+                
+                // Validate format compatibility
+                if (removeBackground.checked && selectedFormat !== 'png' && selectedFormat !== 'webp' && selectedFormat !== 'svg') {
+                    showStatus('Background removal only works with PNG, WEBP, or SVG formats', 'error');
+                    return;
+                }
+                
+                // Show loading overlay
+                loadingOverlay.style.display = 'flex';
+                loadingText.textContent = 'Initializing Image Processor...';
+                progressBar.style.width = '0%';
+                progressPercent.textContent = '0%';
+                
+                // Simulate processing steps with progress
+                let progress = 0;
+                const steps = [
+                    'Reading image data...',
+                    'Analyzing image properties...',
+                    'Preparing conversion settings...',
+                    'Processing image pixels...',
+                    'Applying quality adjustments...',
+                    'Optimizing file size...',
+                    'Finalizing output...'
+                ];
+                
+                const interval = setInterval(() => {
+                    progress += 2 + Math.random() * 3;
+                    if (progress > 100) progress = 100;
+                    progressBar.style.width = `${progress}%`;
+                    progressPercent.textContent = `${Math.round(progress)}%`;
+                    
+                    // Update status text based on progress
+                    const stepIndex = Math.min(Math.floor(progress / (100 / steps.length)), steps.length - 1);
+                    progressStatus.textContent = steps[stepIndex];
+                    loadingText.textContent = steps[stepIndex];
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(finishConversion, 500);
+                    }
+                }, 100);
+            }
+            
+            function finishConversion() {
+                // In a real app, you would do actual image conversion here
+                // For demo purposes, we'll simulate the conversion
+                
+                // Create a canvas to "convert" the image
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Apply resize if enabled
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    if (resizeToggle.checked) {
+                        width = parseInt(widthSlider.value);
+                        height = parseInt(heightSlider.value);
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Get the converted image
+                    let mimeType = 'image/jpeg';
+                    if (selectedFormat === 'png') mimeType = 'image/png';
+                    else if (selectedFormat === 'webp') mimeType = 'image/webp';
+                    else if (selectedFormat === 'gif') mimeType = 'image/gif';
+                    else if (selectedFormat === 'bmp') mimeType = 'image/bmp';
+                    else if (selectedFormat === 'tiff') mimeType = 'image/tiff';
+                    else if (selectedFormat === 'svg') mimeType = 'image/svg+xml';
+                    else if (selectedFormat === 'pdf') mimeType = 'application/pdf';
+                    else if (selectedFormat === 'eps') mimeType = 'application/postscript';
+                    else if (selectedFormat === 'indd') mimeType = 'application/x-indesign';
+                    else if (selectedFormat === 'ai') mimeType = 'application/pdf'; // AI files are typically PDFs
+                    else if (selectedFormat === 'psd') mimeType = 'image/vnd.adobe.photoshop';
+                    
+                    const quality = parseInt(qualitySlider.value) / 100;
+                    const compression = parseInt(compressionSlider.value);
+                    
+                    // Simulate processing time based on settings
+                    const processingTime = 800 + (quality * 500) + (compression * 200);
+                    
+                    setTimeout(() => {
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                showStatus('Conversion failed. Please try again.', 'error');
+                                loadingOverlay.style.display = 'none';
+                                return;
+                            }
+                            
+                            convertedFile = new File([blob], `converted.${selectedFormat}`, { type: mimeType });
+                            
+                            // Show converted preview
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                convertedPreview.src = e.target.result;
+                                
+                                convertedInfo.innerHTML = `
+                                    <p><span>Type:</span> <span>${mimeType}</span></p>
+                                    <p><span>Size:</span> <span>${formatFileSize(blob.size)}</span></p>
+                                    <p><span>Dimensions:</span> <span>${width} × ${height} px</span></p>
+                                    <p><span>Format:</span> <span>${selectedFormat.toUpperCase()}</span></p>
+                                    <p><span>Quality:</span> <span>${qualitySlider.value}%</span></p>
+                                `;
+                                
+                                // Hide loading overlay
+                                loadingOverlay.style.display = 'none';
+                                
+                                // Show download button
+                                downloadBtn.style.display = 'block';
+                                
+                                showStatus('Image converted successfully! Ready to download.', 'success');
+                                
+                                // Add celebration effect for premium formats
+                                if (['eps', 'indd', 'ai', 'psd'].includes(selectedFormat)) {
+                                    celebrate();
+                                }
+                            };
+                            reader.readAsDataURL(blob);
+                        }, mimeType, quality);
+                    }, processingTime);
+                };
+                img.src = URL.createObjectURL(selectedFile);
+            }
+            
+            function celebrate() {
+                const container = document.querySelector('.container');
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.background = 'var(--premium-gradient)';
+                confetti.style.borderRadius = '50%';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '100';
+                confetti.style.animation = 'confettiFall 3s linear forwards';
+                
+                // Create multiple confetti pieces
+                for (let i = 0; i < 50; i++) {
+                    const clone = confetti.cloneNode();
+                    clone.style.left = `${Math.random() * 100}%`;
+                    clone.style.top = '-10px';
+                    clone.style.opacity = Math.random();
+                    clone.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+                    clone.style.animationDelay = `${Math.random() * 0.5}s`;
+                    container.appendChild(clone);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        clone.remove();
+                    }, 3000);
+                }
+                
+                // Add CSS for animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes confettiFall {
+                        0% {
+                            transform: translateY(0) rotate(0deg);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translateY(100vh) rotate(360deg);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            function downloadImage() {
+                if (!convertedFile) return;
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(convertedFile);
+                a.download = convertedFile.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showStatus('Download started!', 'success');
+            }
+            
+            function resetConverter() {
+                fileInput.value = '';
+                selectedFile = null;
+                convertedFile = null;
+                fileName.textContent = 'No file selected';
+                previewSection.style.display = 'none';
+                downloadBtn.style.display = 'none';
+                originalPreview.src = '';
+                convertedPreview.src = '';
+                originalInfo.innerHTML = '';
+                convertedInfo.innerHTML = '';
+                statusMessage.style.display = 'none';
+                
+                // Reset settings to defaults
+                qualitySlider.value = 90;
+                qualityValue.textContent = '90%';
+                compressionSlider.value = 4;
+                compressionValue.textContent = 'Balanced';
+                preserveExif.checked = true;
+                optimizeSize.checked = false;
+                removeBackground.checked = false;
+                removeBackground.disabled = false;
+                addWatermark.checked = false;
+                enhanceQuality.checked = false;
+                resizeToggle.checked = false;
+                widthContainer.style.display = 'none';
+                heightContainer.style.display = 'none';
+                maintainAspect.checked = true;
+                
+                // Reset format selection
+                formatBtns.forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.format-btn[data-format="tiff"]').classList.add('active');
+                selectedFormat = 'tiff';
+            }
+            
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message';
+                statusMessage.classList.add(`status-${type}`);
+                statusMessage.style.display = 'block';
+                statusMessage.style.opacity = '1';
+                
+                setTimeout(() => {
+                    statusMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        statusMessage.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function getFileType(filename) {
+                const extension = filename.split('.').pop().toLowerCase();
+                const types = {
+                    'jpg': 'image/jpeg',
+                    'jpeg': 'image/jpeg',
+                    'png': 'image/png',
+                    'gif': 'image/gif',
+                    'webp': 'image/webp',
+                    'bmp': 'image/bmp',
+                    'tiff': 'image/tiff',
+                    'svg': 'image/svg+xml',
+                    'raw': 'image/x-dcraw',
+                    'psd': 'image/vnd.adobe.photoshop',
+                    'ai': 'application/pdf',
+                    'eps': 'application/postscript',
+                    'indd': 'application/x-indesign',
+                    'pdf': 'application/pdf',
+                    'ico': 'image/x-icon',
+                    'heic': 'image/heic',
+                    'avif': 'image/avif'
+                };
+                return types[extension] || 'Unknown';
+            }
+            document.addEventListener("contextmenu", event => event.preventDefault());
+            document.addEventListener("keydown", event => {
+                if (event.ctrlKey && (event.key === "u" || event.key === "U")) {
+                    event.preventDefault();
+            }
+});
+
+        });
+    </script>
+</body>
+</html>
